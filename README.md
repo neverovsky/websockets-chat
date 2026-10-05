@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ws_test
+
+A small real-time chat / notification demo: a [Next.js](https://nextjs.org) frontend talking to a standalone [`ws`](https://github.com/websockets/ws) WebSocket server.
+
+## How it works
+
+- **`server.js`** – plain Node WebSocket server on `ws://localhost:8080`. It greets each new client with a welcome message and broadcasts every received message to all connected clients (including the sender).
+- **`app/components/NotificationCenter.js`** – client component that opens a WebSocket connection to the server, lists incoming messages, and provides an input + **Send** button.
+- **`app/page.tsx`** – home page rendering `NotificationCenter`.
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies. The WebSocket server needs the `ws` package, which is not listed in `package.json`, so install it too:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm install ws
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run the two processes in separate terminals:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# 1. WebSocket server (port 8080)
+node server.js
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 2. Next.js dev server (port 3000)
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) in two or more browser tabs, type a message and press **Send**. It appears in every open tab.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Command         | Description                  |
+| --------------- | ---------------------------- |
+| `npm run dev`   | Start the Next.js dev server |
+| `npm run build` | Build for production         |
+| `npm start`     | Run the production build     |
+| `npm run lint`  | Lint with ESLint             |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Stack
 
-## Deploy on Vercel
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, `ws`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- The WebSocket URL (`ws://localhost:8080`) is hard-coded in `NotificationCenter.js`; change it there when deploying.
+- Messages are not persisted – only clients connected at the time receive a broadcast.
+- This Next.js version has breaking changes from older releases; see `node_modules/next/dist/docs/` and `AGENTS.md` before changing app code.
